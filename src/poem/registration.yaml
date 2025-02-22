@@ -1,0 +1,28 @@
+# Registration configuration for CrewAI Ray Masumi Demo
+# Note: The following fields are automatically set by the script:
+#   - network
+#   - smartContractAddress
+#   - sellingWalletVkey
+
+example_output: "example_output"
+tags:
+  - "tag1"
+  - "tag2"
+name: "CrewAI Ray Masumi Demo"
+api_url: "http://localhost:8000"
+description: "A Demo to showcase CrewAI, Ray, and Masumi"
+author:
+  name: "Your Name"
+  contact: "author@example.com"
+  organization: "Author Organization"
+legal:
+  privacy_policy: "https://example.com/privacy"
+  terms: "https://example.com/terms"
+  other: "https://example.com/legal"
+capability:
+  name: "Capability Name"
+  version: "1.0.0"
+requests_per_hour: "100"
+pricing:
+  - unit: "usdm"
+    quantity: "10000000"
