@@ -1,12 +1,15 @@
 # CrewAI Ray Masumi Demo
 
-Thi is a simple demo to showcase how you can run a CrewAI Flow (the standard poem flow) on a locally hosted Ray Cluster and deploy it with Ray Serve, while we have this Agentic Services actually registered on the Masumi Network Preprod environment and implemented the Agentic Service API endpoints, for it to accept payments for execution.
+This is a simple demo to showcase how you can run a CrewAI Flow (the standard poem flow) on a locally hosted Ray Cluster and deploy it with Ray Serve, while we have this Agentic Services actually registered on the Masumi Network Preprod environment for it to accept payments for execution.
 
 We are using hatch to handle the dependencies and the packaging.
 
 ```bash
 pip install hatch
 ```
+
+You will need to have your own Masumi Payment Service up and running to test this demo.
+Learn more about it [here](https://docs.masumi.network/).
 
 ## Setup
 
