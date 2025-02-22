@@ -8,8 +8,8 @@ We are using hatch to handle the dependencies and the packaging.
 pip install hatch
 ```
 
-!!! warning
-    You will need to have your own Masumi Payment Service up and running to test this demo.
+> [!WARNING]  
+> You will need to have your own Masumi Payment Service up and running to test this demo.
 
 ### Related Documentation:
 - [Masumi Documentation](https://docs.masumi.network/)
