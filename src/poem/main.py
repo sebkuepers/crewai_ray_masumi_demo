@@ -238,9 +238,6 @@ def main():
 
     serve.start()
 
-    # Set your agent identifier accordingly.
-    agent_identifier = "<your_agent_identifier>"
-
     # Create a named, detached JobManager actor.
     JobManager.options(
         name="JobManager",
