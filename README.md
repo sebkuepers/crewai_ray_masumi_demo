@@ -30,9 +30,9 @@ PAYMENT_SERVICE_URL=your_payment_service_url
 PAYMENT_API_KEY=your_payment_api_key
 ```
 
-RAY_TOKEN you can set yourself.
-PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
-PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
+- RAY_TOKEN you can set yourself.
+- PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
+- PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
 
 AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
 
