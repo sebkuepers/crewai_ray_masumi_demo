@@ -3,6 +3,7 @@ import os
 import uuid
 import time
 import asyncio
+import logging
 from random import randint
 
 from dotenv import load_dotenv
@@ -14,6 +15,11 @@ from ray import serve
 
 # Import your PoemFlow components
 from crewai.flow import Flow, listen, start
+
+# Configure logging (you can configure this further as needed)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 # ---------------------------
 # Load environment variables
@@ -159,9 +165,10 @@ class PaymentPoemJobActor:
 # ---------------------------
 @ray.remote
 class JobManager:
-    def __init__(self, agent_identifier: str):
+    def __init__(self, agent_identifier: str, jobs=None):
         self.agent_identifier = agent_identifier
-        self.jobs = {}  # Maps job_id to PaymentPoemJobActor handles
+        # If a jobs dictionary is provided, use it; otherwise, start fresh.
+        self.jobs = jobs if jobs is not None else {}
 
     async def create_job(self, num_poems: int):
         job_id = str(uuid.uuid4())
@@ -177,6 +184,10 @@ class JobManager:
             return {"error": f"No job found with id {job_id}"}
         status = await job_actor.get_status.remote()
         return {"job_id": job_id, **status}
+
+    def export_state(self):
+        """Exports the current jobs dictionary for handover."""
+        return self.jobs
 
 # ---------------------------
 # FastAPI Endpoints
@@ -238,12 +249,43 @@ def main():
 
     serve.start()
 
-    # Create a named, detached JobManager actor.
+
+    # Attempt to retrieve the existing JobManager actor and export its state.
+    try:
+        old_job_manager = ray.get_actor("JobManager", namespace="serve")
+        try:
+            state = ray.get(old_job_manager.export_state.remote())
+        except AttributeError:
+            # If the method isn't available, we can't migrate state.
+            state = None
+        # Kill the old actor after exporting its state.
+        ray.kill(old_job_manager)
+    except ValueError:
+        # No existing actor found; initialize state as None.
+        state = None
+
+    # If state was handed over, log details about it.
+    if state is not None:
+        total_jobs = len(state)
+        # Query all job actors concurrently.
+        try:
+            statuses = ray.get([job_actor.get_status.remote() for job_actor in state.values()])
+            # Count jobs that are still running (assuming get_status returns a dict with a "status" key).
+            running_count = sum(1 for s in statuses if s.get("status") == "running")
+        except Exception as e:
+            logger.warning("Error querying job statuses during handover: %s", e)
+            running_count = 0
+        logger.info("Handover detected: %d jobs found in state; %d PaymentPoemJobActor(s) are still running.",
+                    total_jobs, running_count)
+    else:
+        logger.info("No existing JobManager state to hand over.")
+
+    # Create a new named, detached JobManager actor with the exported state (if any).
     JobManager.options(
         name="JobManager",
         namespace="serve",
         lifetime="detached"
-    ).remote(AGENT_IDENTIFIER)
+    ).remote(AGENT_IDENTIFIER, jobs=state)
 
     # Deploy the FastAPI app.
     serve.run(MyFastAPIDeployment.bind(), route_prefix="/")
