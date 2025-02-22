@@ -87,7 +87,7 @@ hatch run register
 
 This will register the demo on the Masumi Network Preprod environment and set the AGENT_IDENTIFIER environment variable automatically in your .env file.
 
-## Running the Demo
+## Testing the Flow
 
 If you want to run the CrewAI flow once as a test without Ray or Masumi involved, you can do so with the following command:
 
@@ -96,6 +96,8 @@ hatch run kickoff
 ```
 Be aware that this will only work with the default "num_poems" value of 1.
 With multiple poems, the flow will not work, as it would expect the Ray Cluster to distribute the work of writing the poems into concurrent tasks.
+
+## Running the Demo
 
 So let's start the Ray Cluster locally with the RAY_TOKEN you set in the environment variables.
 
