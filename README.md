@@ -9,7 +9,11 @@ pip install hatch
 ```
 
 You will need to have your own Masumi Payment Service up and running to test this demo.
-Learn more about it [in the Masumi Documentation](https://docs.masumi.network/).
+
+### Related Documentation:
+- [Masumi Documentation](https://docs.masumi.network/)
+- [CrewAI Documentation](https://docs.crewai.com/)
+- [Ray Documentation](https://docs.ray.io/)
 
 ## Setup
 
