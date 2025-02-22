@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
+register = "poem.register:main"
 serve = "poem.main:main"
 kickoff = "poem.main:kickoff"
 start_and_pay = "poem.start_and_pay:main"
