@@ -21,6 +21,7 @@ from crewai.flow import Flow, listen, start
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 RAY_TOKEN = os.environ.get("RAY_TOKEN")
+AGENT_IDENTIFIER = os.environ.get("AGENT_IDENTIFIER")
 PAYMENT_SERVICE_URL = os.environ.get("PAYMENT_SERVICE_URL")
 PAYMENT_API_KEY = os.environ.get("PAYMENT_API_KEY")
 
@@ -95,7 +96,7 @@ class StartJobRequest(BaseModel):
 class PaymentPoemJobActor:
     def __init__(self, num_poems: int, agent_identifier: str):
         self.num_poems = num_poems
-        self.agent_identifier = "dcdf2c533510e865e3d7e0f0e5537c7a176dd4dc1df69e83a703976bb03aac169096a56484e983868db536970d26cdf82d83db435b19c8c507b33ea8"
+        self.agent_identifier = AGENT_IDENTIFIER
         self.status = "initialized"
         self.payment_status = "pending"
         self.result = None

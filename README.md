@@ -9,7 +9,7 @@ pip install hatch
 ```
 
 You will need to have your own Masumi Payment Service up and running to test this demo.
-Learn more about it [here](https://docs.masumi.network/).
+Learn more about it [in the Masumi Documentation](https://docs.masumi.network/).
 
 ## Setup
 
@@ -25,6 +25,7 @@ cd CrewAI_Ray_Masumi_Demo
 ```env
 OPENAI_API_KEY=your_openai_api_key
 RAY_TOKEN=your_ray_token
+AGENT_IDENTIFIER=your_agent_identifier
 PAYMENT_SERVICE_URL=your_payment_service_url
 PAYMENT_API_KEY=your_payment_api_key
 ```
@@ -32,6 +33,7 @@ PAYMENT_API_KEY=your_payment_api_key
 RAY_TOKEN you can set yourself.
 PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
 PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
+AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network.
 
 3. Install the project in editable mode
 With hatch installed, run:
