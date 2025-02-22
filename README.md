@@ -75,7 +75,7 @@ So let's start the Ray Cluster locally with the RAY_TOKEN you set in the environ
 ray start --head --redis-password <RAY_TOKEN>
 ```
 
-Then you serve the FastAPI app to the Ray Cluster, buy running the hatch script:
+Then you serve the FastAPI app to the Ray Cluster, by running the hatch script:
 
 ```bash
 hatch run serve
