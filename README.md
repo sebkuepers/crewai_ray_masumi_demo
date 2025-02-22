@@ -13,14 +13,14 @@ Learn more about it [in the Masumi Documentation](https://docs.masumi.network/).
 
 ## Setup
 
-1. Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sebkuepers/CrewAI_Ray_Masumi_Demo.git
 cd CrewAI_Ray_Masumi_Demo
 ```
 
-2. Configure the environment variables
+### 2. Configure the environment variables
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
@@ -36,7 +36,7 @@ PAYMENT_API_KEY=your_payment_api_key
 
 AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
 
-3. Install the project in editable mode
+### 3. Install the project in editable mode
 With hatch installed, run:
 
 ```bash
@@ -46,15 +46,40 @@ This will set up your environment so that any changes to the code are immediatel
 
 ## Register the Demo
 
-To register the demo, you can run the following command:
+To register the demo, you first edit the registration.yaml file to change the name, description, author, etc. of the demo:
+
+```yaml
+example_output: "example_output"
+tags:
+  - "tag1"
+  - "tag2"
+name: "CrewAI Ray Masumi Demo"
+api_url: "http://localhost:8000"
+description: "A Demo to showcase CrewAI, Ray, and Masumi"
+author:
+  name: "Your Name"
+  contact: "author@example.com"
+  organization: "Author Organization"
+legal:
+  privacy_policy: "https://example.com/privacy"
+  terms: "https://example.com/terms"
+  other: "https://example.com/legal"
+capability:
+  name: "Capability Name"
+  version: "1.0.0"
+requests_per_hour: "100"
+pricing:
+  - unit: "usdm"
+    quantity: "10000000"
+```
+
+Then you run the register script:
 
 ```bash
 hatch run register
 ```
 
 This will register the demo on the Masumi Network Preprod environment and set the AGENT_IDENTIFIER environment variable automatically in your .env file.
-
-You can edit the registration.yaml file to change the name, description, author, etc. of the demo.
 
 ## Running the Demo
 
@@ -65,9 +90,6 @@ hatch run kickoff
 ```
 Be aware that this will only work with the default "num_poems" value of 1.
 With multiple poems, the flow will not work, as it would expect the Ray Cluster.
-
-
-
 
 So let's start the Ray Cluster locally with the RAY_TOKEN you set in the environment variables.
 
