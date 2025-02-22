@@ -16,9 +16,17 @@ from ray import serve
 # Import your PoemFlow components
 from crewai.flow import Flow, listen, start
 
-# Configure logging (you can configure this further as needed)
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Set up a logger that aligns with Ray's logging format.
+logger = logging.getLogger("serve")
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+    '%(levelname)s %(asctime)s %(name)s %(process)d -- %(message)s'
+)
+handler.setFormatter(formatter)
+# Ensure we don't add multiple handlers if this code runs repeatedly.
+if not logger.handlers:
+    logger.addHandler(handler)
 
 
 # ---------------------------
@@ -264,21 +272,24 @@ def main():
         # No existing actor found; initialize state as None.
         state = None
 
-    # If state was handed over, log details about it.
+    # If state was handed over, log details.
     if state is not None:
         total_jobs = len(state)
-        # Query all job actors concurrently.
         try:
+            # Retrieve status from each PaymentPoemJobActor.
             statuses = ray.get([job_actor.get_status.remote() for job_actor in state.values()])
-            # Count jobs that are still running (assuming get_status returns a dict with a "status" key).
-            running_count = sum(1 for s in statuses if s.get("status") == "running")
+            # Count jobs that are not yet completed.
+            running_count = sum(1 for s in statuses if s.get("status") != "completed")
         except Exception as e:
             logger.warning("Error querying job statuses during handover: %s", e)
             running_count = 0
-        logger.info("Handover detected: %d jobs found in state; %d PaymentPoemJobActor(s) are still running.",
-                    total_jobs, running_count)
+
+        logger.info(
+            "JobManagerActorHandover detected: %d jobs found in state; %d PaymentPoemJobActor(s) are still running.",
+            total_jobs, running_count
+        )
     else:
-        logger.info("No existing JobManager state to hand over.")
+        logger.info("No existing JobManagerActor state to hand over.")
 
     # Create a new named, detached JobManager actor with the exported state (if any).
     JobManager.options(
