@@ -89,7 +89,7 @@ If you want to run the CrewAI flow once as a test without Ray or Masumi involved
 hatch run kickoff
 ```
 Be aware that this will only work with the default "num_poems" value of 1.
-With multiple poems, the flow will not work, as it would expect the Ray Cluster.
+With multiple poems, the flow will not work, as it would expect the Ray Cluster to distribute the work of writing the poems into concurrent tasks.
 
 So let's start the Ray Cluster locally with the RAY_TOKEN you set in the environment variables.
 
