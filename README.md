@@ -39,7 +39,8 @@ PAYMENT_API_KEY=your_payment_api_key
 - PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
 - PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
 
-AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
+> [!IMPORTANT]  
+> AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
 
 ### 3. Install the project in editable mode
 With hatch installed, run:
