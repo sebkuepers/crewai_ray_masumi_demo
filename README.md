@@ -1,56 +1,64 @@
-# {{crew_name}} Crew
+# CrewAI Ray Masumi Demo
 
-Welcome to the {{crew_name}} Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Thi is a simple demo to showcase how you can run a CrewAI Flow (the standard poem flow) on a locally hosted Ray Cluster and deploy it with Ray Serve, while we have this Agentic Services actually registered on the Masumi Network Preprod environment and implemented the Agentic Service API endpoints, for it to accept payments for execution.
 
-## Installation
-
-Ensure you have Python >=3.10 <3.13 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
-
-First, if you haven't already, install uv:
+We are using hatch to handle the dependencies and the packaging.
 
 ```bash
-pip install uv
+pip install hatch
 ```
 
-Next, navigate to your project directory and install the dependencies:
+## Setup
 
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
-crewai install
-```
-
-### Customizing
-
-**Add your `OPENAI_API_KEY` into the `.env` file**
-
-- Modify `src/poem/config/agents.yaml` to define your agents
-- Modify `src/poem/config/tasks.yaml` to define your tasks
-- Modify `src/poem/crew.py` to add your own logic, tools and specific args
-- Modify `src/poem/main.py` to add custom inputs for your agents and tasks
-
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+1. Clone the repository
 
 ```bash
-crewai run
+git clone https://github.com/sebkuepers/CrewAI_Ray_Masumi_Demo.git
+cd CrewAI_Ray_Masumi_Demo
 ```
 
-This command initializes the poem Crew, assembling the agents and assigning them tasks as defined in your configuration.
+2. Configure the environment variables
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+```env
+OPENAI_API_KEY=your_openai_api_key
+RAY_TOKEN=your_ray_token
+PAYMENT_SERVICE_URL=your_payment_service_url
+PAYMENT_API_KEY=your_payment_api_key
+```
 
-## Understanding Your Crew
+RAY_TOKEN you can set yourself.
+PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
+PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
 
-The poem Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+3. Install the project in editable mode
+With hatch installed, run:
 
-## Support
+```bash
+pip install -e .
+```
+This will set up your environment so that any changes to the code are immediately reflected.
 
-For support, questions, or feedback regarding the {{crew_name}} Crew or crewAI.
+## Running the Demo
 
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+First you need to start the Ray Cluster.
 
-Let's create wonders together with the power and simplicity of crewAI.
+```bash
+ray start --head --redis-password <RAY_TOKEN>
+```
+
+Then you serve the FastAPI app to the Ray Cluster
+
+```bash
+hatch run serve
+```
+
+This will serve the FastAPI app to the Ray Cluster and you can now access the endpoints.
+
+```bash
+curl -X POST "http://localhost:8000/start_job" -H "Content-Type: application/json" -d '{"num_poems": 1}'
+```
+
+
+
+
+
