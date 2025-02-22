@@ -15,7 +15,6 @@ from ray import serve
 # Import your PoemFlow components
 from crewai.flow import Flow, listen, start
 
-
 # ---------------------------
 # Load environment variables
 # ---------------------------
@@ -45,6 +44,10 @@ class PoemFlow(Flow[PoemState]):
 
     @listen(generate_sentence_count)
     def generate_poem(self):
+
+        # Lazy import to avoid Pickling issues.
+        from poem.crews.poem_crew.poem_crew import PoemCrew
+
         print("Generating poem(s)")
         if self.state.num_poems <= 1:
             result = PoemCrew().crew().kickoff(inputs={"sentence_count": self.state.sentence_count})
@@ -68,9 +71,7 @@ def generate_single_poem(sentence_count: int):
     result = PoemCrew().crew().kickoff(inputs={"sentence_count": sentence_count})
     return result.raw
 
-def kickoff(num_poems: int):
-    # Lazy import to avoid Pickling issues.
-    from poem.crews.poem_crew.poem_crew import PoemCrew
+def kickoff(num_poems: int = 1):
 
     poem_flow = PoemFlow()
     poem_flow.state.num_poems = num_poems
