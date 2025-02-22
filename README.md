@@ -2,10 +2,10 @@
 
 This is a simple demo to showcase how you can run a CrewAI Flow (the standard poem flow) on a locally hosted Ray Cluster and deploy it with Ray Serve, while we have this Agentic Services actually registered on the Masumi Network Preprod environment for it to accept payments for execution.
 
-We are using hatch to handle the dependencies and the packaging.
+We are using uv to handle the dependencies and the packaging.
 
 ```bash
-pip install hatch
+pip install uv
 ```
 
 > [!WARNING]  
@@ -42,13 +42,14 @@ PAYMENT_API_KEY=your_payment_api_key
 > [!IMPORTANT]  
 > AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
 
-### 3. Install the project in editable mode
-With hatch installed, run:
+### 3. Install the project 
+With uv installed, run:
 
 ```bash
-pip install -e .
+uv lock
+uv sync
 ```
-This will set up your environment so that any changes to the code are immediately reflected.
+This will set up your environment and install all the dependencies.
 
 ## Register the Demo
 
@@ -82,7 +83,7 @@ pricing:
 Then you run the register script:
 
 ```bash
-hatch run register
+uv run register
 ```
 
 This will register the demo on the Masumi Network Preprod environment and set the AGENT_IDENTIFIER environment variable automatically in your .env file.
@@ -92,7 +93,7 @@ This will register the demo on the Masumi Network Preprod environment and set th
 If you want to run the CrewAI flow once as a test without Ray or Masumi involved, you can do so with the following command:
 
 ```bash
-hatch run kickoff
+uv run kickoff
 ```
 Be aware that this will only work with the default "num_poems" value of 1.
 With multiple poems, the flow will not work, as it would expect the Ray Cluster to distribute the work of writing the poems into concurrent tasks.
@@ -108,13 +109,13 @@ ray start --head --redis-password <RAY_TOKEN>
 Then you serve the FastAPI app to the Ray Cluster, by running the hatch script:
 
 ```bash
-hatch run serve
+uv run serve
 ```
 
 To start the CrewAI flow and pay for it, you can run the following command in a separate terminal form the same directory:
 
 ```bash
-hatch run start_and_pay
+uv run start_and_pay
 ```
 
 This will start the CrewAI flow and pay for it, using the Masumi Payment Service.
