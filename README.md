@@ -33,7 +33,8 @@ PAYMENT_API_KEY=your_payment_api_key
 RAY_TOKEN you can set yourself.
 PAYMENT_SERVICE_URL is the URL of the Masumi Payment Service.
 PAYMENT_API_KEY is the API Key of the Masumi Payment Service.
-AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network.
+
+AGENT_IDENTIFIER is the identifier you get after registering your Agentic Service on the Masumi Network. We provide you an easy way to register this demo. See below.
 
 3. Install the project in editable mode
 With hatch installed, run:
@@ -42,6 +43,18 @@ With hatch installed, run:
 pip install -e .
 ```
 This will set up your environment so that any changes to the code are immediately reflected.
+
+## Register the Demo
+
+To register the demo, you can run the following command:
+
+```bash
+hatch run register
+```
+
+This will register the demo on the Masumi Network Preprod environment and set the AGENT_IDENTIFIER environment variable automatically in your .env file.
+
+You can edit the registration.yaml file to change the name, description, author, etc. of the demo.
 
 ## Running the Demo
 
@@ -52,6 +65,8 @@ hatch run kickoff
 ```
 Be aware that this will only work with the default "num_poems" value of 1.
 With multiple poems, the flow will not work, as it would expect the Ray Cluster.
+
+
 
 
 So let's start the Ray Cluster locally with the RAY_TOKEN you set in the environment variables.
