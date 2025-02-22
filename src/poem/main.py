@@ -243,7 +243,7 @@ def main():
         name="JobManager",
         namespace="serve",
         lifetime="detached"
-    ).remote(agent_identifier)
+    ).remote(AGENT_IDENTIFIER)
 
     # Deploy the FastAPI app.
     serve.run(MyFastAPIDeployment.bind(), route_prefix="/")
