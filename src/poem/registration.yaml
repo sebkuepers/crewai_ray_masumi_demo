@@ -9,7 +9,7 @@ tags:
   - "tag1"
   - "tag2"
 name: "CrewAI Ray Masumi Demo"
-api_url: "http://localhost:8000"
+apiUrl: "http://localhost:8000"
 description: "A Demo to showcase CrewAI, Ray, and Masumi"
 author:
   name: "Your Name"
