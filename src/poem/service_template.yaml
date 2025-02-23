@@ -1,0 +1,22 @@
+# check out service reference for all supported fields: https://docs.anyscale.com/reference/service-api#serviceconfig
+
+# use the auto-generated name when empty
+name:
+# use the default container image when empty
+image_uri: 
+# use the default configuration of clusters when empty
+compute_config:
+# choose which directory to upload to Anyscale 
+working_dir: .
+# use the default Anyscale Cloud in your organization when empty
+cloud:
+requirements: requirements.txt #your requirements.txt file
+query_auth_token_enabled: false  #set to true if you want to use a query auth token
+env_vars:
+  PAYMENT_API_KEY: #your masumi payment api key
+  PAYMENT_SERVICE_URL: #your masumi payment service url
+  AGENT_IDENTIFIER: #your agent identifier
+  OPENAI_API_KEY: #your openai api key
+# configure the Ray Serve apps
+applications:
+- import_path: main:dapp

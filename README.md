@@ -2,6 +2,8 @@
 
 This is a simple demo to showcase how you can run a CrewAI Flow (the standard poem flow) on a locally hosted Ray Cluster and deploy it with Ray Serve, while we have this Agentic Services actually registered on the Masumi Network Preprod environment for it to accept payments for execution.
 
+The example is optimized to either run on a locally hosted Ray Cluster or on the Anyscale Cloud.
+
 We are using uv to handle the dependencies and the packaging.
 
 ```bash
@@ -15,6 +17,7 @@ pip install uv
 - [Masumi Documentation](https://docs.masumi.network/)
 - [CrewAI Documentation](https://docs.crewai.com/)
 - [Ray Documentation](https://docs.ray.io/)
+- [Anyscale Documentation](https://docs.anyscale.com)
 
 ## Setup
 
@@ -125,6 +128,36 @@ To check the status of the job, you can run the following command:
 ```bash
 curl http://localhost:8000/status?job_id=<job_id>
 ```
+
+## Deploying to Anyscale
+
+To deploy the demo to the Anyscale Cloud, we have included a service template in the repository.
+This will help you to deploy the demo to the Anyscale Cloud as a Service.
+
+```yaml
+name:
+image_uri: 
+compute_config:
+working_dir: .
+cloud:
+requirements: requirements.txt 
+query_auth_token_enabled: false
+env_vars:
+  PAYMENT_API_KEY:
+  PAYMENT_SERVICE_URL:
+  AGENT_IDENTIFIER:
+  OPENAI_API_KEY:
+applications:
+- import_path: main:dapp
+```
+
+You can then deploy the service to the Anyscale Cloud with the following command from the CLI:
+
+```bash
+ anyscale service deploy -f service.yaml -n crewai-ray-masumi-demo
+```
+In order to get the URL of the deployed service, you need to run it once and then rerun you
+registration with the Masumi Network. Update the AGENT_IDENTIFIER in the registration.yaml and redeploy your app.
 
 
 
