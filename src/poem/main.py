@@ -197,10 +197,60 @@ class JobManager:
         """Exports the current jobs dictionary for handover."""
         return self.jobs
 
+# a function to initialize the JobManager Actor
+def initialize_job_manager():
+    """
+    Attempts to retrieve the existing JobManager actor, export its state,
+    log the handover details, kill the old actor, and then create a new
+    detached JobManager actor with the exported state (if any).
+    """
+    state = None
+
+    # Try to retrieve an existing JobManager actor.
+    try:
+        old_job_manager = ray.get_actor("JobManager", namespace="serve")
+        try:
+            state = ray.get(old_job_manager.export_state.remote())
+        except AttributeError:
+            logger.info("Existing JobManager actor found, but no export_state method. Starting with no state.")
+        # Kill the old actor after retrieving its state.
+        ray.kill(old_job_manager)
+    except ValueError:
+        logger.info("No existing JobManager actor found. Starting with no state.")
+
+    # If a state was exported, log its details.
+    if state:
+        total_jobs = len(state)
+        try:
+            statuses = ray.get([job_actor.get_status.remote() for job_actor in state.values()])
+            running_count = sum(1 for s in statuses if s.get("status") != "completed")
+        except Exception as e:
+            logger.warning("Error querying job statuses during handover: %s", e)
+            running_count = 0
+        logger.info(
+            "JobManagerActor handover: %d jobs found; %d PaymentPoemJobActor(s) still running.",
+            total_jobs, running_count
+        )
+    else:
+        logger.info("No existing JobManagerActor state to hand over.")
+
+    # Create a new, detached JobManager actor with the exported state (if any).
+    JobManager.options(
+        name="JobManager",
+        namespace="serve",
+        lifetime="detached"
+    ).remote(AGENT_IDENTIFIER, jobs=state)
+
 # ---------------------------
 # FastAPI Endpoints
 # ---------------------------
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    # In production (or AnyScale) mode, initialize the JobManager.
+    if os.environ.get("MODE", "anyscale") != "local":
+        initialize_job_manager()
 
 @app.post("/start_job")
 async def start_job(request: StartJobRequest):
@@ -239,6 +289,10 @@ async def availability():
 class MyFastAPIDeployment:
     pass
 
+# provide a dapp object which would be used for local and anyscale deployment
+dapp = MyFastAPIDeployment.bind()
+
+# only needed for local deployment
 def main():
     # Shutdown any existing Ray instance.
     if ray.is_initialized():
@@ -255,56 +309,21 @@ def main():
         }}
     )
 
+    # Deploy the FastAPI app locally
     serve.start()
 
+    # initialize the JobManager actor
+    initialize_job_manager()
 
-    # Attempt to retrieve the existing JobManager actor and export its state.
-    try:
-        old_job_manager = ray.get_actor("JobManager", namespace="serve")
-        try:
-            state = ray.get(old_job_manager.export_state.remote())
-        except AttributeError:
-            # If the method isn't available, we can't migrate state.
-            state = None
-        # Kill the old actor after exporting its state.
-        ray.kill(old_job_manager)
-    except ValueError:
-        # No existing actor found; initialize state as None.
-        state = None
-
-    # If state was handed over, log details.
-    if state is not None:
-        total_jobs = len(state)
-        try:
-            # Retrieve status from each PaymentPoemJobActor.
-            statuses = ray.get([job_actor.get_status.remote() for job_actor in state.values()])
-            # Count jobs that are not yet completed.
-            running_count = sum(1 for s in statuses if s.get("status") != "completed")
-        except Exception as e:
-            logger.warning("Error querying job statuses during handover: %s", e)
-            running_count = 0
-
-        logger.info(
-            "JobManagerActorHandover detected: %d jobs found in state; %d PaymentPoemJobActor(s) are still running.",
-            total_jobs, running_count
-        )
-    else:
-        logger.info("No existing JobManagerActor state to hand over.")
-
-    # Create a new named, detached JobManager actor with the exported state (if any).
-    JobManager.options(
-        name="JobManager",
-        namespace="serve",
-        lifetime="detached"
-    ).remote(AGENT_IDENTIFIER, jobs=state)
-
-    # Deploy the FastAPI app.
-    serve.run(MyFastAPIDeployment.bind(), route_prefix="/")
+    serve.run(dapp, route_prefix="/")
 
     # Keep the process alive.
     while True:
         time.sleep(1)
 
 
+# Check for local execution.
 if __name__ == "__main__":
-    main()
+    # Use an environment variable or flag to decide local vs. anyscale mode.
+    if os.environ.get("MODE", "anyscale") == "local":
+        main()
