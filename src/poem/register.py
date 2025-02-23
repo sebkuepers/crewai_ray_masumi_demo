@@ -54,7 +54,7 @@ def register_agent(api_key, service_url, registration_config, smart_contract_add
     network, smartContractAddress, and sellingWalletVkey with auto-fetched values.
     Returns the POST response (which may not yet include the agentIdentifier).
     """
-    # Override fields with auto-fetched values.
+    # Override specific fields with auto-fetched values.
     registration_config["network"] = "Preprod"
     registration_config["smartContractAddress"] = smart_contract_address
     registration_config["sellingWalletVkey"] = seller_vkey
@@ -65,8 +65,11 @@ def register_agent(api_key, service_url, registration_config, smart_contract_add
         "token": api_key,
         "Content-Type": "application/json"
     }
-    
+
     response = requests.post(url, json=registration_config, headers=headers)
+    # Log full error details if the response is not successful.
+    if response.status_code != 200:
+        print("Error response:", response.text)
     response.raise_for_status()
     return response.json()
 
@@ -75,7 +78,7 @@ def get_agent_identifier(api_key, smart_contract_address, seller_vkey):
     Retrieves the agent identifier by sending a GET request to the registry endpoint.
     Uses the seller_vkey and smart_contract_address to filter the response.
     """
-    url = "https://payment.masumi.network/api/v1/registry/"
+    url = "https://payment.masumi.network/api/v1/registry/wallet/"
     params = {
         "walletVKey": seller_vkey,
         "network": "Preprod",
