@@ -142,12 +142,13 @@ def main():
     PAYMENT_API_KEY = os.environ.get("PAYMENT_API_KEY")
     AGENT_IDENTIFIER = os.environ.get("AGENT_IDENTIFIER")
     PAYMENT_SERVICE_URL = os.environ.get("PAYMENT_SERVICE_URL")
+    RAY_CLUSTER_URL = os.environ.get("RAY_CLUSTER_URL")
     
     if not all([PAYMENT_API_KEY, AGENT_IDENTIFIER, PAYMENT_SERVICE_URL]):
         raise EnvironmentError("Missing one or more required environment variables: PAYMENT_API_KEY, AGENT_IDENTIFIER, PAYMENT_SERVICE_URL")
     
     # Set the Ray cluster URL for job triggering and status checking
-    ray_cluster_url = "http://localhost:8000"
+    ray_cluster_url = RAY_CLUSTER_URL
     
     # Step 1: Retrieve payment source details
     smart_contract_address, seller_vkey = get_payment_source(PAYMENT_API_KEY, PAYMENT_SERVICE_URL)
